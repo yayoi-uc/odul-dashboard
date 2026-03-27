@@ -102,8 +102,103 @@
     margin-top: 8px;
   }
 
-  .change.up { background: rgba(34,197,94,0.15); color: #4ade80; }
-  .change.down { background: rgba(239,68,68,0.15); color: #f87171; }
+  .change.up { background: rgba(34,197,94,0.15); color: #16a34a; }
+  .change.down { background: rgba(239,68,68,0.15); color: #dc2626; }
+
+  .monthly-section { padding: 0 48px 32px; }
+  .monthly-section h3 { font-size: 14px; font-weight: 500; letter-spacing: 1px; color: #a1a1aa; margin-bottom: 20px; }
+
+  .monthly-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .month-card {
+    background: linear-gradient(145deg, rgba(0,0,0,0.02), rgba(0,0,0,0.005));
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 16px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .month-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+
+  .month-card.over::before { background: linear-gradient(90deg, #16a34a, #4ade80); }
+  .month-card.under::before { background: linear-gradient(90deg, #dc2626, #f87171); }
+  .month-card.inprogress::before { background: linear-gradient(90deg, #d97706, #fbbf24); }
+
+  .month-card .month-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .month-card .month-name {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .month-card .month-badge {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: 600;
+  }
+
+  .month-badge.over { background: rgba(34,197,94,0.12); color: #16a34a; }
+  .month-badge.under { background: rgba(239,68,68,0.12); color: #dc2626; }
+  .month-badge.inprogress { background: rgba(245,158,11,0.12); color: #d97706; }
+
+  .month-card .metric-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+  }
+
+  .month-card .metric-row:last-child { border-bottom: none; }
+  .month-card .metric-label { color: #71717a; }
+  .month-card .metric-value { font-weight: 600; }
+
+  .month-card .progress-bar {
+    height: 6px;
+    background: rgba(0,0,0,0.06);
+    border-radius: 3px;
+    margin: 12px 0 8px;
+    overflow: hidden;
+  }
+
+  .month-card .progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 1s ease;
+  }
+
+  .month-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(0,0,0,0.06);
+  }
+
+  .month-kpi { text-align: center; }
+  .month-kpi .mk-label { font-size: 9px; color: #a1a1aa; text-transform: uppercase; letter-spacing: 1px; }
+  .month-kpi .mk-value { font-size: 14px; font-weight: 600; margin-top: 2px; }
+
+  .actual-vs-target { padding: 0 48px 32px; }
+  .actual-vs-target h3 { font-size: 14px; font-weight: 500; letter-spacing: 1px; color: #a1a1aa; margin-bottom: 20px; }
+  .avt-chart-wrap { height: 300px; }
 
   .charts-grid {
     display: grid;
@@ -318,6 +413,81 @@
   </div>
 </div>
 
+<div class="monthly-section">
+  <h3>Monthly Actual Performance — FY2026</h3>
+  <div class="monthly-grid">
+
+    <div class="month-card over">
+      <div class="month-header">
+        <span class="month-name">1月</span>
+        <span class="month-badge over">138% 達成</span>
+      </div>
+      <div class="metric-row"><span class="metric-label">EC売上</span><span class="metric-value">¥13,812,805</span></div>
+      <div class="metric-row"><span class="metric-label">目標</span><span class="metric-value">¥10,000,000</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:100%;background:linear-gradient(90deg,#16a34a,#4ade80)"></div></div>
+      <div class="metric-row"><span class="metric-label">新規</span><span class="metric-value">¥7,665,641 (55%)</span></div>
+      <div class="metric-row"><span class="metric-label">リピーター</span><span class="metric-value">¥6,147,164 (45%)</span></div>
+      <div class="month-kpi-grid">
+        <div class="month-kpi"><div class="mk-label">Session</div><div class="mk-value">75,613</div></div>
+        <div class="month-kpi"><div class="mk-label">CVR</div><div class="mk-value">0.90%</div></div>
+        <div class="month-kpi"><div class="mk-label">ROAS</div><div class="mk-value">1,184%</div></div>
+        <div class="month-kpi"><div class="mk-label">客単価</div><div class="mk-value">¥18,538</div></div>
+        <div class="month-kpi"><div class="mk-label">広告費</div><div class="mk-value">¥1.18M</div></div>
+        <div class="month-kpi"><div class="mk-label">越境</div><div class="mk-value">¥145K</div></div>
+      </div>
+    </div>
+
+    <div class="month-card under">
+      <div class="month-header">
+        <span class="month-name">2月</span>
+        <span class="month-badge under">74% 未達</span>
+      </div>
+      <div class="metric-row"><span class="metric-label">EC売上</span><span class="metric-value">¥7,377,598</span></div>
+      <div class="metric-row"><span class="metric-label">目標</span><span class="metric-value">¥10,000,000</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:74%;background:linear-gradient(90deg,#dc2626,#f87171)"></div></div>
+      <div class="metric-row"><span class="metric-label">新規</span><span class="metric-value">¥4,306,326 (58%)</span></div>
+      <div class="metric-row"><span class="metric-label">リピーター</span><span class="metric-value">¥2,685,697 (36%)</span></div>
+      <div class="month-kpi-grid">
+        <div class="month-kpi"><div class="mk-label">Session</div><div class="mk-value">64,213</div></div>
+        <div class="month-kpi"><div class="mk-label">CVR</div><div class="mk-value">0.57%</div></div>
+        <div class="month-kpi"><div class="mk-label">ROAS</div><div class="mk-value">675%</div></div>
+        <div class="month-kpi"><div class="mk-label">客単価</div><div class="mk-value">¥17,536</div></div>
+        <div class="month-kpi"><div class="mk-label">広告費</div><div class="mk-value">¥1.10M</div></div>
+        <div class="month-kpi"><div class="mk-label">越境</div><div class="mk-value">¥307K</div></div>
+      </div>
+    </div>
+
+    <div class="month-card inprogress">
+      <div class="month-header">
+        <span class="month-name">3月</span>
+        <span class="month-badge inprogress">43% 進行中</span>
+      </div>
+      <div class="metric-row"><span class="metric-label">EC売上</span><span class="metric-value">¥4,096,140</span></div>
+      <div class="metric-row"><span class="metric-label">その他</span><span class="metric-value">¥242,440</span></div>
+      <div class="metric-row"><span class="metric-label">目標</span><span class="metric-value">¥10,000,000</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:43%;background:linear-gradient(90deg,#d97706,#fbbf24)"></div></div>
+      <div class="metric-row"><span class="metric-label">新規</span><span class="metric-value">¥2,441,454 (60%)</span></div>
+      <div class="metric-row"><span class="metric-label">リピーター</span><span class="metric-value">¥1,654,686 (40%)</span></div>
+      <div class="month-kpi-grid">
+        <div class="month-kpi"><div class="mk-label">Session</div><div class="mk-value">42,933</div></div>
+        <div class="month-kpi"><div class="mk-label">CVR</div><div class="mk-value">0.52%</div></div>
+        <div class="month-kpi"><div class="mk-label">ROAS</div><div class="mk-value">310%</div></div>
+        <div class="month-kpi"><div class="mk-label">客単価</div><div class="mk-value">¥16,926</div></div>
+        <div class="month-kpi"><div class="mk-label">広告費</div><div class="mk-value">¥664K</div></div>
+        <div class="month-kpi"><div class="mk-label">越境</div><div class="mk-value">¥311K</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="actual-vs-target">
+  <h3>Actual vs Target — Monthly Comparison</h3>
+  <div class="chart-card">
+    <div class="avt-chart-wrap"><canvas id="avtChart"></canvas></div>
+  </div>
+</div>
+
 <div class="timeline">
   <h3>Annual Strategy Timeline</h3>
   <div class="season-bar">
@@ -517,6 +687,49 @@ bizData.forEach(b => {
     <td style="color:#71717a">${pct}%</td>
     <td class="bar-cell"><div class="biz-bar"><div class="biz-bar-fill" style="width:${barW}%;background:${b.color}"></div></div></td>
   </tr>`;
+});
+
+// Actual vs Target chart
+const avtMonths = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+const avtTarget = [10,10,10,10,10,10,10,10,10,10,10,10];
+const avtActual = [13.81, 7.38, 4.34, null, null, null, null, null, null, null, null, null];
+
+new Chart(document.getElementById('avtChart'), {
+  type: 'bar',
+  data: {
+    labels: avtMonths,
+    datasets: [
+      {
+        label: '実績',
+        data: avtActual,
+        backgroundColor: avtActual.map((v,i) => {
+          if (v === null) return 'transparent';
+          if (i === 2) return 'rgba(245,158,11,0.7)';
+          return v >= avtTarget[i] ? 'rgba(34,197,94,0.7)' : 'rgba(239,68,68,0.7)';
+        }),
+        borderRadius: 6,
+        barPercentage: 0.6
+      },
+      {
+        label: '目標',
+        data: avtTarget,
+        backgroundColor: 'rgba(0,0,0,0.08)',
+        borderRadius: 6,
+        barPercentage: 0.6
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } },
+      tooltip: { callbacks: { label: ctx => ctx.raw !== null ? `${ctx.dataset.label}: ¥${ctx.raw}M` : '' } }
+    },
+    scales: {
+      x: { grid: { display: false } },
+      y: { ticks: { callback: v => `¥${v}M` }, grid: { color: 'rgba(0,0,0,0.04)' }, suggestedMax: 16 }
+    }
+  }
 });
 </script>
 </body>
