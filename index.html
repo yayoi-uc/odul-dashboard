@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ödül Sales Dashboard 2026</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #0a0a0f;
+    color: #e4e4e7;
+    min-height: 100vh;
+  }
+
+  .header {
+    padding: 32px 48px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .header h1 {
+    font-size: 28px;
+    font-weight: 300;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #c9a96e, #f0d89d, #c9a96e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .header .subtitle {
+    font-size: 13px;
+    color: #71717a;
+    letter-spacing: 2px;
+  }
+
+  .header .date-badge {
+    font-size: 12px;
+    color: #a1a1aa;
+    background: rgba(255,255,255,0.05);
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 32px 48px;
+  }
+
+  .kpi-card {
+    background: linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  .kpi-card .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #71717a;
+    margin-bottom: 12px;
+  }
+
+  .kpi-card .value {
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: -1px;
+  }
+
+  .kpi-card .sub {
+    font-size: 12px;
+    color: #71717a;
+    margin-top: 8px;
+  }
+
+  .kpi-card .change {
+    display: inline-block;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    margin-top: 8px;
+  }
+
+  .change.up { background: rgba(34,197,94,0.15); color: #4ade80; }
+  .change.down { background: rgba(239,68,68,0.15); color: #f87171; }
+
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    padding: 0 48px 32px;
+  }
+
+  .chart-card {
+    background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    padding: 28px;
+  }
+
+  .chart-card h3 {
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    color: #a1a1aa;
+    margin-bottom: 20px;
+  }
+
+  .chart-wrap { position: relative; height: 320px; }
+
+  .bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding: 0 48px 32px;
+  }
+
+  .timeline {
+    padding: 0 48px 48px;
+  }
+
+  .timeline h3 {
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    color: #a1a1aa;
+    margin-bottom: 20px;
+  }
+
+  .timeline-row {
+    display: grid;
+    grid-template-columns: 80px repeat(12, 1fr);
+    gap: 2px;
+    margin-bottom: 4px;
+  }
+
+  .timeline-label {
+    font-size: 11px;
+    color: #71717a;
+    display: flex;
+    align-items: center;
+    padding-right: 12px;
+  }
+
+  .timeline-cell {
+    background: rgba(255,255,255,0.03);
+    border-radius: 4px;
+    padding: 8px 6px;
+    font-size: 9px;
+    color: #a1a1aa;
+    min-height: 36px;
+    line-height: 1.4;
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+
+  .timeline-cell.active {
+    background: rgba(201,169,110,0.12);
+    border-color: rgba(201,169,110,0.25);
+    color: #f0d89d;
+  }
+
+  .timeline-cell.highlight {
+    background: rgba(99,102,241,0.12);
+    border-color: rgba(99,102,241,0.25);
+    color: #a5b4fc;
+  }
+
+  .timeline-header {
+    font-size: 11px;
+    font-weight: 600;
+    color: #71717a;
+    text-align: center;
+    padding: 8px;
+  }
+
+  .season-bar {
+    display: grid;
+    grid-template-columns: 80px repeat(12, 1fr);
+    gap: 2px;
+    margin-bottom: 12px;
+  }
+
+  .season-tag {
+    font-size: 10px;
+    text-align: center;
+    padding: 4px;
+    border-radius: 4px;
+    font-weight: 500;
+    letter-spacing: 1px;
+  }
+
+  .s-winter { background: rgba(99,102,241,0.15); color: #818cf8; }
+  .s-spring { background: rgba(236,72,153,0.15); color: #f472b6; }
+  .s-ss { background: rgba(245,158,11,0.15); color: #fbbf24; }
+  .s-summer { background: rgba(34,197,94,0.15); color: #4ade80; }
+  .s-sa { background: rgba(249,115,22,0.15); color: #fb923c; }
+  .s-autumn { background: rgba(168,85,247,0.15); color: #c084fc; }
+
+  .biz-table { width: 100%; border-collapse: collapse; }
+  .biz-table th {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #52525b;
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .biz-table td {
+    padding: 12px;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+  .biz-table .bar-cell { width: 40%; }
+  .biz-bar {
+    height: 8px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.06);
+    overflow: hidden;
+  }
+  .biz-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s ease;
+  }
+
+  .now-marker {
+    position: absolute;
+    width: 2px;
+    background: rgba(239,68,68,0.6);
+    top: 0; bottom: 0;
+    z-index: 10;
+  }
+
+  @media (max-width: 1024px) {
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .charts-grid, .bottom-grid { grid-template-columns: 1fr; }
+    .header, .kpi-row, .charts-grid, .bottom-grid, .timeline { padding-left: 24px; padding-right: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>ödül</h1>
+    <div class="subtitle">Annual Sales Dashboard 2026</div>
+  </div>
+  <div class="date-badge" id="currentDate"></div>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi-card" style="--accent: #c9a96e;">
+    <div class="label">年間売上目標</div>
+    <div class="value" style="color: #f0d89d;">¥180.5M</div>
+    <div class="sub">全事業合計</div>
+  </div>
+  <div class="kpi-card" style="--accent: #6366f1;">
+    <div class="label">ödül事業</div>
+    <div class="value" style="color: #a5b4fc;">¥131M</div>
+    <div class="sub">72.6% of total</div>
+  </div>
+  <div class="kpi-card" style="--accent: #22c55e;">
+    <div class="label">Q4目標（10-12月）</div>
+    <div class="value" style="color: #4ade80;">¥75.5M</div>
+    <div class="sub">年間の41.8% — ホリデー繁忙期</div>
+  </div>
+  <div class="kpi-card" style="--accent: #f59e0b;">
+    <div class="label">月平均目標</div>
+    <div class="value" style="color: #fbbf24;">¥15M</div>
+    <div class="sub">Peak: 12月 ¥42.5M</div>
+  </div>
+</div>
+
+<div class="charts-grid">
+  <div class="chart-card">
+    <h3>Monthly Revenue Target by Business Unit</h3>
+    <div class="chart-wrap"><canvas id="stackedChart"></canvas></div>
+  </div>
+  <div class="chart-card">
+    <h3>Revenue Mix</h3>
+    <div class="chart-wrap"><canvas id="doughnutChart"></canvas></div>
+  </div>
+</div>
+
+<div class="bottom-grid">
+  <div class="chart-card">
+    <h3>Business Unit Breakdown</h3>
+    <table class="biz-table">
+      <thead><tr><th>事業</th><th>年間目標</th><th>構成比</th><th class="bar-cell"></th></tr></thead>
+      <tbody id="bizTable"></tbody>
+    </table>
+  </div>
+  <div class="chart-card">
+    <h3>Quarterly Targets</h3>
+    <div class="chart-wrap"><canvas id="quarterChart"></canvas></div>
+  </div>
+</div>
+
+<div class="timeline">
+  <h3>Annual Strategy Timeline</h3>
+  <div class="season-bar">
+    <div></div>
+    <div class="season-tag s-winter">Winter</div>
+    <div class="season-tag s-winter">Winter</div>
+    <div class="season-tag s-spring">Spring</div>
+    <div class="season-tag s-spring">Spring</div>
+    <div class="season-tag s-ss">S/S</div>
+    <div class="season-tag s-summer">Summer</div>
+    <div class="season-tag s-summer">Summer</div>
+    <div class="season-tag s-sa">S/A</div>
+    <div class="season-tag s-autumn">Autumn</div>
+    <div class="season-tag s-autumn">Autumn</div>
+    <div class="season-tag s-autumn">Autumn</div>
+    <div class="season-tag s-winter">Winter</div>
+  </div>
+  <div class="timeline-row">
+    <div></div>
+    <div class="timeline-header">1月</div><div class="timeline-header">2月</div>
+    <div class="timeline-header">3月</div><div class="timeline-header">4月</div>
+    <div class="timeline-header">5月</div><div class="timeline-header">6月</div>
+    <div class="timeline-header">7月</div><div class="timeline-header">8月</div>
+    <div class="timeline-header">9月</div><div class="timeline-header">10月</div>
+    <div class="timeline-header">11月</div><div class="timeline-header">12月</div>
+  </div>
+  <div class="timeline-row">
+    <div class="timeline-label">プロモ</div>
+    <div class="timeline-cell active">福袋<br>値上げ駆込</div>
+    <div class="timeline-cell">プレSS公開</div>
+    <div class="timeline-cell highlight">ノベルティCP<br>会員CP</div>
+    <div class="timeline-cell">ELLE SHOP<br>X立上げ</div>
+    <div class="timeline-cell">1点もの<br>TikTokライブ</div>
+    <div class="timeline-cell active">TOI立上げ<br>ビーズNL</div>
+    <div class="timeline-cell highlight">展示会toB</div>
+    <div class="timeline-cell"></div>
+    <div class="timeline-cell active">アニバーサリー<br>ダイヤ/10K</div>
+    <div class="timeline-cell highlight">伊勢丹<br>イベント</div>
+    <div class="timeline-cell active">ホリデー公開<br>OEM納品</div>
+    <div class="timeline-cell highlight">POP UP<br>東京/大阪</div>
+  </div>
+  <div class="timeline-row">
+    <div class="timeline-label">MD計画</div>
+    <div class="timeline-cell"></div>
+    <div class="timeline-cell">プレSS<br>サマー企画</div>
+    <div class="timeline-cell active">プレSS発売<br>AW企画</div>
+    <div class="timeline-cell">SSクリエイティブ<br>ホリデー企画</div>
+    <div class="timeline-cell active">SS発売<br>ホリデーSP</div>
+    <div class="timeline-cell highlight">インド立上<br>ビーズ/OEM</div>
+    <div class="timeline-cell"></div>
+    <div class="timeline-cell active">ホリデー<br>本発注</div>
+    <div class="timeline-cell"></div>
+    <div class="timeline-cell"></div>
+    <div class="timeline-cell">ホリデー</div>
+    <div class="timeline-cell highlight">ホリデー</div>
+  </div>
+  <div class="timeline-row">
+    <div class="timeline-label">撮影</div>
+    <div class="timeline-cell active">プレSS撮影</div>
+    <div class="timeline-cell"></div>
+    <div class="timeline-cell active">SS撮影</div>
+    <div class="timeline-cell"></div>
+    <div class="timeline-cell active">SUMMER撮影</div>
+    <div class="timeline-cell"></div>
+    <div class="timeline-cell"></div>
+    <div class="timeline-cell highlight">アニバ撮影<br>9-10月撮影</div>
+    <div class="timeline-cell"></div>
+    <div class="timeline-cell"></div>
+    <div class="timeline-cell active">ホリデー撮影</div>
+    <div class="timeline-cell"></div>
+  </div>
+  <div class="timeline-row">
+    <div class="timeline-label">市場</div>
+    <div class="timeline-cell"></div>
+    <div class="timeline-cell" style="color:#f87171;font-size:9px">閑散期</div>
+    <div class="timeline-cell" style="color:#fbbf24;font-size:9px">⚠️ホーリー<br>休暇多い</div>
+    <div class="timeline-cell"></div>
+    <div class="timeline-cell"></div>
+    <div class="timeline-cell" style="color:#4ade80;font-size:9px">繁忙期</div>
+    <div class="timeline-cell" style="color:#4ade80;font-size:9px">繁忙期</div>
+    <div class="timeline-cell" style="color:#f87171;font-size:9px">⚠️夏季休暇<br>品薄注意</div>
+    <div class="timeline-cell" style="font-size:9px">プロパー</div>
+    <div class="timeline-cell" style="color:#fbbf24;font-size:9px">⚠️国慶節<br>中国影響</div>
+    <div class="timeline-cell" style="font-size:9px">プロパー</div>
+    <div class="timeline-cell" style="color:#4ade80;font-size:9px">繁忙期🔥</div>
+  </div>
+</div>
+
+<script>
+document.getElementById('currentDate').textContent = new Date().toLocaleDateString('ja-JP', {year:'numeric',month:'long',day:'numeric',weekday:'short'});
+
+const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+const target = [10,10,12,11,12,12,12,12,14,19,14,42.5];
+const odul =   [10,10,10,10,10,10,10,10,12,12,12,15];
+const toi =    [0,0,0,0,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5];
+const oem =    [0,0,0,0,0,0,0,0,0,0,0,15];
+const live =   [0,0,0,0,1,1,1,1,1,1,1,2];
+const offline= [0,0,2,1,0.5,0.5,0.5,0.5,0.5,5.5,0.5,10];
+
+Chart.defaults.color = '#71717a';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.04)';
+Chart.defaults.font.family = 'Inter';
+
+// Stacked bar
+new Chart(document.getElementById('stackedChart'), {
+  type: 'bar',
+  data: {
+    labels: months,
+    datasets: [
+      { label: 'ödül事業', data: odul, backgroundColor: 'rgba(99,102,241,0.7)', borderRadius: 4 },
+      { label: 'TOI事業', data: toi, backgroundColor: 'rgba(236,72,153,0.7)', borderRadius: 4 },
+      { label: 'OEM事業', data: oem, backgroundColor: 'rgba(245,158,11,0.7)', borderRadius: 4 },
+      { label: '1点ものライブ', data: live, backgroundColor: 'rgba(34,197,94,0.7)', borderRadius: 4 },
+      { label: 'オフライン/モール', data: offline, backgroundColor: 'rgba(168,85,247,0.7)', borderRadius: 4 },
+      { label: '売上目標', data: target, type: 'line', borderColor: '#f0d89d', borderWidth: 2, pointRadius: 4, pointBackgroundColor: '#f0d89d', fill: false, tension: 0.3, order: -1 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } },
+      tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ¥${ctx.raw}M` } }
+    },
+    scales: {
+      x: { stacked: true, grid: { display: false } },
+      y: { stacked: true, ticks: { callback: v => `¥${v}M` }, grid: { color: 'rgba(255,255,255,0.04)' } }
+    }
+  }
+});
+
+// Doughnut
+new Chart(document.getElementById('doughnutChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['ödül事業','TOI事業','OEM事業','1点ものライブ','オフライン/モール'],
+    datasets: [{
+      data: [131, 4, 15, 9, 21.5],
+      backgroundColor: ['rgba(99,102,241,0.8)','rgba(236,72,153,0.8)','rgba(245,158,11,0.8)','rgba(34,197,94,0.8)','rgba(168,85,247,0.8)'],
+      borderWidth: 0,
+      hoverOffset: 8
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    cutout: '65%',
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 12, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } },
+      tooltip: { callbacks: { label: ctx => `${ctx.label}: ¥${ctx.raw}M (${(ctx.raw/180.5*100).toFixed(1)}%)` } }
+    }
+  }
+});
+
+// Quarter chart
+const q1 = target.slice(0,3).reduce((a,b)=>a+b,0);
+const q2 = target.slice(3,6).reduce((a,b)=>a+b,0);
+const q3 = target.slice(6,9).reduce((a,b)=>a+b,0);
+const q4 = target.slice(9,12).reduce((a,b)=>a+b,0);
+new Chart(document.getElementById('quarterChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Q1 (1-3月)','Q2 (4-6月)','Q3 (7-9月)','Q4 (10-12月)'],
+    datasets: [{
+      data: [q1, q2, q3, q4],
+      backgroundColor: ['rgba(99,102,241,0.6)','rgba(236,72,153,0.6)','rgba(245,158,11,0.6)','rgba(201,169,110,0.8)'],
+      borderRadius: 8,
+      barThickness: 48
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => `¥${ctx.raw}M` } }
+    },
+    scales: {
+      x: { grid: { display: false } },
+      y: { ticks: { callback: v => `¥${v}M` }, grid: { color: 'rgba(255,255,255,0.04)' } }
+    }
+  }
+});
+
+// Business table
+const bizData = [
+  { name: 'ödül事業', amount: 131, color: '#6366f1' },
+  { name: 'オフライン/モール', amount: 21.5, color: '#a855f7' },
+  { name: 'OEM事業', amount: 15, color: '#f59e0b' },
+  { name: '1点ものライブ', amount: 9, color: '#22c55e' },
+  { name: 'TOI事業', amount: 4, color: '#ec4899' },
+];
+const tbody = document.getElementById('bizTable');
+bizData.forEach(b => {
+  const pct = (b.amount / 180.5 * 100).toFixed(1);
+  const barW = (b.amount / 131 * 100).toFixed(0);
+  tbody.innerHTML += `<tr>
+    <td style="color:${b.color};font-weight:500">${b.name}</td>
+    <td>¥${b.amount}M</td>
+    <td style="color:#71717a">${pct}%</td>
+    <td class="bar-cell"><div class="biz-bar"><div class="biz-bar-fill" style="width:${barW}%;background:${b.color}"></div></div></td>
+  </tr>`;
+});
+</script>
+</body>
+</html>
